@@ -30,4 +30,8 @@
     <ProjectReference Include="..\..\UniversityManagementSystem.DLL\UniversityManagementSystem.DLL.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ViewModels\Response\" />
+  </ItemGroup>
+
 </Project>
