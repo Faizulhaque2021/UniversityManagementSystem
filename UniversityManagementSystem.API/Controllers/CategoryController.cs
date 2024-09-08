@@ -1,9 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Azure.Core;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using UniversityManagementSystem.API.ViewModels.Request;
+using UniversityManagementSystem.BLL.Service;
+using UniversityManagementSystem.BLL.ViewModels.Request;
 using UniversityManagementSystem.DLL.DbContext;
 using UniversityManagementSystem.DLL.Models;
 
@@ -14,9 +15,11 @@ namespace UniversityManagementSystem.API.Controllers
     public class CategoryController : ApiBaseController
     {
         private readonly ApplicationDbContext _dbcontext;
-        public CategoryController(ApplicationDbContext dbContext)
+        public readonly ICategoryService _categoryService;
+        public CategoryController(ApplicationDbContext dbContext, ICategoryService categoryService)
         {
             _dbcontext = dbContext;
+            _categoryService = categoryService;
         }
 
         [HttpGet]
@@ -29,8 +32,7 @@ namespace UniversityManagementSystem.API.Controllers
         [HttpGet(template: "id")]
         public async Task<IActionResult> GetAData(int id)
         {
-            var categories = await _dbcontext.categories.FirstOrDefaultAsync(x => x.Id == id);
-            return Ok(categories);
+            return Ok(await _categoryService.GetAData(id));
         }
 
         [HttpPost]
@@ -41,56 +43,23 @@ namespace UniversityManagementSystem.API.Controllers
                 Name = request.Name,
             };
 
-            _dbcontext.categories.Add(category);
+            return Ok(await _categoryService.AddCategory(category));
 
-            if (await _dbcontext.SaveChangesAsync() > 0)
-            {
-                return Ok(category);
-            }
-
-            return NotFound("Inser Error");
+            //return NotFound("Inser Error");
 
         }
 
         [HttpPut(template: "id")]
         public async Task<IActionResult> Update(int id, CategoryInsertViewModel request)
         {
-            var category = await _dbcontext.categories.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (category == null)
-            {
-                return NotFound();
-            }
-            category.Name = request.Name;
-            _dbcontext.categories.Update(category);
-
-            if (await _dbcontext.SaveChangesAsync() > 0)
-            {
-                return Ok(category);
-            }
-            return NotFound("Update Error");
-
+            return Ok(await _categoryService.UpdateCategory(id, request));
         }
 
         [HttpDelete(template: "id")]
 
         public async Task<IActionResult> Delete(int id)
         {
-            var category = await _dbcontext.categories.FirstOrDefaultAsync(x => x.Id == id);
-
-            if (category == null)
-            {
-                return NotFound("Data Not Found");
-            }
-
-            _dbcontext.categories.Remove(category);
-
-            if (await _dbcontext.SaveChangesAsync() > 0)
-            {
-                return Ok("Data Delete Successfully");
-            }
-
-            return NotFound("Delete Error");
+            return Ok(await _categoryService.DeleteCategory(id));
         }
     }
 }
