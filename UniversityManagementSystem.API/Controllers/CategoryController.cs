@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversityManagementSystem.BLL.Service;
 using UniversityManagementSystem.BLL.ViewModels.Request;
-using UniversityManagementSystem.DLL.DbContext;
 using UniversityManagementSystem.DLL.Models;
 
 namespace UniversityManagementSystem.API.Controllers
@@ -14,19 +13,20 @@ namespace UniversityManagementSystem.API.Controllers
     //[ApiController]
     public class CategoryController : ApiBaseController
     {
-        private readonly ApplicationDbContext _dbcontext;
+        
         public readonly ICategoryService _categoryService;
-        public CategoryController(ApplicationDbContext dbContext, ICategoryService categoryService)
+        public readonly ITestService _testService;
+        public CategoryController(ICategoryService categoryService, ITestService testService)
         {
-            _dbcontext = dbContext;
             _categoryService = categoryService;
+            _testService = testService;
         }
 
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            List<Category> categories = await _dbcontext.categories.AsQueryable().ToListAsync();
-            return Ok(categories);
+            
+            return Ok(await _categoryService.GetAll());
         }
 
         [HttpGet(template: "id")]

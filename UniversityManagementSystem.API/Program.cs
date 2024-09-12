@@ -9,14 +9,14 @@ using UniversityManagementSystem.DLL.DbContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add Services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllersWithViews();
 builder.Services.AddControllers();
 builder.Services.AddDatabaseExtensionHelper(builder.Configuration);
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddSingleton<ITestSingleTone, TestSingleTone>();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
